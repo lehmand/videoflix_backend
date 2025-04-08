@@ -8,7 +8,7 @@ from django.conf import settings
 def generate_activation_link(user):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    activation_link = f"http://localhost:4200/activate/{uid}/{token}/"
+    activation_link = f"http://videoflix.daniel-lehmann.dev/activate/{uid}/{token}/"
     return activation_link
 
 def send_confirm_mail(email, username, activation_link):
