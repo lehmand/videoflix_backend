@@ -19,3 +19,9 @@ def send_confirm_mail(email, username, activation_link):
       'username': username,
       'activation_link': activation_link,
     })
+  
+  text_content = f"Hallo {username}, bitte bestätige deine E-Mail über diesen Link: {activation_link}"
+  
+  email_msg = EmailMultiAlternatives(subject, text_content, from_email, [email])
+  email_msg.attach_alternative(html_content, "text/html")
+  email_msg.send()
