@@ -1,0 +1,57 @@
+{% load static %}
+<html>
+	<head>
+		<title>Confirm your email</title>
+		<style>
+			body {
+				background-color: white;
+				margin: 0;
+				padding: 0;
+				font-family: Arial, Helvetica, sans-serif;
+			}
+
+			header {
+				display: flex;
+				justify-content: center;
+			}
+
+			img {
+				height: 40px;
+				width: 250px;
+			}
+
+			p {
+				color: rgb(87, 87, 87);
+			}
+
+			button {
+				background-color: #2e3edf;
+				padding: 12px 24px;
+				font-weight: 700;
+				font-size: 18px;
+				border: none;
+				border-radius: 48px;
+				color: white;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="https://daniel-lehmann.dev/assets/logo.svg" alt="videoflix-logo" />
+		</header>
+		<main>
+			<p>
+				Dear {{ username }}, <br />
+				Thank your for registering with <a href="videoflix.daniel-lehmann.dev">Videoflix</a>. To complete your
+				registration and verify your email address, please click the link below:
+			</p>
+			<a href="{{ activation_link }}"><button>Activate Account</button></a>
+			<p>
+				If you did not create an account with us, please disregard this email. <br /><br />
+				Best regards, <br /><br />
+				Your Videoflix Team.
+			</p>
+		</main>
+	</body>
+</html>
