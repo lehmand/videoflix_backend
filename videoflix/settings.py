@@ -46,9 +46,11 @@ INSTALLED_APPS = [
     'user_auth',
     'corsheaders',
     'videos.apps.VideosConfig',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,6 +78,12 @@ CACHES = {
     "KEY_PREFIX": "videoflix"
 }
 }
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+CACHE_TTL = 60 * 15
 
 TEMPLATES = [
     {
