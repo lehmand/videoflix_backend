@@ -28,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 
 # Application definition
 
@@ -42,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'user_auth',
     'corsheaders',
-    'videos',
+    'videos.apps.VideosConfig',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +65,17 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 ROOT_URLCONF = 'videoflix.urls'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient"
+    },
+    "KEY_PREFIX": "videoflix"
+}
+}
 
 TEMPLATES = [
     {
