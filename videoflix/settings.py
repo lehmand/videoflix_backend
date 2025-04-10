@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'videos.apps.VideosConfig',
     'debug_toolbar',
+    'django_rq',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +62,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+RQ_QUEUES = {
+    'default': {
+        'HOST': '192.168.178.65',
+        'PORT': 6379,
+        'DB': 0,
+        # 'PASSWORD': 'foobared',
+        'DEFAULT_TIMEOUT': 360,
+        'DEFAULT_RESULT_TTL': 800,
+    }
+}
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
@@ -71,7 +83,8 @@ ROOT_URLCONF = 'videoflix.urls'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://192.168.178.65:6379/1",
+        # "PASSWORD": "foobared",
         "OPTIONS": {
         "CLIENT_CLASS": "django_redis.client.DefaultClient"
     },
