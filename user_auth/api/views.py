@@ -1,9 +1,11 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_401_UNAUTHORIZED
+from user_auth.models import User
 from .serializers import RegisterSerializer
 from django.contrib.auth import authenticate
 from .utils import generate_activation_link, send_confirm_mail
@@ -46,4 +48,10 @@ class CustomAuthToken(ObtainAuthToken):
       return Response({'message': 'Invalid username or password.'}, status=HTTP_401_UNAUTHORIZED)
 
 
+class CheckUserView(APIView):
+    permission_classes = [AllowAny]
 
+    def post(self, request):
+        email = request.data.get('email', '')
+        exists = User.objects.filter(email=email).exists()
+        return Response({'exists': exists}, status=HTTP_200_OK)
