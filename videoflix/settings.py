@@ -46,13 +46,13 @@ INSTALLED_APPS = [
     'user_auth',
     'corsheaders',
     'videos.apps.VideosConfig',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'django_rq',
     'import_export',
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -115,6 +115,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'videoflix.wsgi.application'
 
 # Database
@@ -122,10 +123,17 @@ WSGI_APPLICATION = 'videoflix.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'videoflix',         # Name der erstellten DB
+        'USER': 'daniel',             # Dein DB-Benutzer
+        'PASSWORD': 'admin',     # Passwort des Benutzers
+        'HOST': 'localhost',          # Für lokale Installationen
+        'PORT': '5432',               # Standardport von PostgreSQL
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
