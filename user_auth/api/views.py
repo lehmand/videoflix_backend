@@ -54,4 +54,4 @@ class CheckUserView(APIView):
     def post(self, request):
         email = request.data.get('email', '')
         exists = User.objects.filter(email=email).exists()
-        return Response({'exists': exists}, status=HTTP_200_OK)
+        return Response({'ok': exists}, status=HTTP_200_OK)
