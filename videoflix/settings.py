@@ -46,13 +46,13 @@ INSTALLED_APPS = [
     'user_auth',
     'corsheaders',
     'videos.apps.VideosConfig',
-    # 'debug_toolbar',
+    'debug_toolbar',
     'django_rq',
     'import_export',
 ]
 
 MIDDLEWARE = [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -124,11 +124,11 @@ WSGI_APPLICATION = 'videoflix.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'videoflix',         # Name der erstellten DB
-        'USER': 'daniel',             # Dein DB-Benutzer
-        'PASSWORD': 'admin',     # Passwort des Benutzers
-        'HOST': 'localhost',          # Für lokale Installationen
-        'PORT': '5432',               # Standardport von PostgreSQL
+        'NAME': 'videoflix',
+        'USER': 'daniel',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

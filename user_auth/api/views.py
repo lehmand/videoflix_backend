@@ -6,9 +6,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from user_auth.models import User
-from .serializers import RegisterSerializer
 from django.contrib.auth import authenticate
-from .utils import generate_activation_link, send_confirm_mail
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import render, redirect
+from django.views import View
+from .serializers import RegisterSerializer
+from .utils import generate_activation_link, send_confirm_mail, send_reset_mail
 
 class RegisterView(generics.CreateAPIView):
   serializer_class = RegisterSerializer
@@ -38,6 +43,11 @@ class CustomAuthToken(ObtainAuthToken):
 
     user = authenticate(request, username=email, password=password)
     if user is not None:
+      if not user.is_activated:
+        return Response(
+           {'message': 'Account not activated. Please activate your account via the email activation link.'},
+            status=HTTP_401_UNAUTHORIZED
+          )
       token, _ = Token.objects.get_or_create(user=user)
       return Response({
         'user_id': user.pk,
@@ -55,3 +65,77 @@ class CheckUserView(APIView):
         email = request.data.get('email', '')
         exists = User.objects.filter(email=email).exists()
         return Response({'ok': exists}, status=HTTP_200_OK)
+    
+class ActivateAccountView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_activated = True
+            user.save()
+            return redirect('activation_success')
+        else:
+            return render(request, 'activation_invalid.html')
+
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({
+                'message': 'If an account exists for the specified email, you will receive an email with password reset instructions.'
+            }, status=HTTP_200_OK)
+        
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        
+        reset_link = f"http://vid.daniel-lehmann.dev/reset/{uid}/{token}/"
+        
+        send_reset_mail(user.email, user.username, reset_link)
+        
+        return Response({
+            'message': 'If an account exists for the specified email, you will receive an email with password reset instructions.'
+        }, status=HTTP_200_OK)
+    
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request, uidb64, token):
+        new_password = request.data.get('new_password')
+        new_password2 = request.data.get('new_password2')
+        
+        if new_password != new_password2:
+            return Response(
+                {'message': 'Passwords do not match.'},
+                status=HTTP_400_BAD_REQUEST
+            )
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            return Response(
+                {'message': 'Invalid reset link.'},
+                status=HTTP_400_BAD_REQUEST
+            )
+        
+        if not default_token_generator.check_token(user, token):
+            return Response(
+                {'message': 'Invalid or expired token.'},
+                status=HTTP_400_BAD_REQUEST
+            )
+        
+        user.set_password(new_password)
+        user.save()
+        
+        return Response(
+            {'message': 'Password has been reset successfully.'},
+            status=HTTP_200_OK
+        )
