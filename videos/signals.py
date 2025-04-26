@@ -3,18 +3,18 @@ from django.dispatch import receiver
 from django.db.models.signals import post_delete, post_save
 from .tasks import convert_video, convert_video_hls
 import os
-# import django_rq
+import django_rq
 
 
 
 @receiver(post_save, sender=Video)
 def video_post_save(instance, created, **kwargs):
     if created:
-        # queue = django_rq.get_queue('default', autocommit=True)
-        # queue.enqueue(convert_video, instance.file.path, 'hd480', '480p')
-        # queue.enqueue(convert_video, instance.file.path, 'hd720', '720p')
-        # queue.enqueue(convert_video_hls, instance.file.path, 'hd480', '480p')
-        # queue.enqueue(convert_video_hls, instance.file.path, 'hd720', '720p')
+        queue = django_rq.get_queue('default', autocommit=True)
+        queue.enqueue(convert_video, instance.file.path, 'hd480', '480p')
+        queue.enqueue(convert_video, instance.file.path, 'hd720', '720p')
+        queue.enqueue(convert_video_hls, instance.file.path, 'hd480', '480p')
+        queue.enqueue(convert_video_hls, instance.file.path, 'hd720', '720p')
 
         convert_video(instance.file.path, 'hd480', '480p')
         convert_video(instance.file.path, 'hd720', '720p')

@@ -11,22 +11,24 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l6m8-z#sn3f^^8#o$@jme34vz1fw+axsczyv=$shev49gufg=q'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -65,27 +67,19 @@ MIDDLEWARE = [
 
 RQ_QUEUES = {
     'default': {
-        'HOST': '192.168.178.65',
-        'PORT': 6379,
-        'DB': 0,
-        # 'PASSWORD': 'foobared',
+        'HOST': os.getenv('REDIS_HOST', 'localhost'),
+        'PORT': int(os.getenv('REDIS_PORT', 6379)),
+        'DB': int(os.getenv('REDIS_DB', 0)),
         'DEFAULT_TIMEOUT': 360,
         'DEFAULT_RESULT_TTL': 800,
     }
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
-]
-
-ROOT_URLCONF = 'videoflix.urls'
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.178.65:6379/1",
-        # "PASSWORD": "foobared",
+        "LOCATION": os.getenv('REDIS_URL', 'redis://localhost:6379/1'),
         "OPTIONS": {
         "CLIENT_CLASS": "django_redis.client.DefaultClient"
     },
@@ -93,11 +87,6 @@ CACHES = {
 }
 }
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
-
-CACHE_TTL = 60 * 15
 
 TEMPLATES = [
     {
@@ -115,24 +104,27 @@ TEMPLATES = [
     },
 ]
 
-
-WSGI_APPLICATION = 'videoflix.wsgi.application'
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'videoflix',
-        'USER': 'daniel',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('POSTGRES_NAME', 'videoflix'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', 5432),
     }
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND       = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST          = os.getenv('EMAIL_HOST',    'localhost')
+EMAIL_PORT          = int(os.getenv('EMAIL_PORT', 25))
+EMAIL_USE_TLS       = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_USE_SSL       = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+EMAIL_HOST_USER     = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 
 
 # Password validation
@@ -177,4 +169,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/staticfiles")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ROOT_URLCONF = 'videoflix.urls'
+
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+
+CSRF_TRUSTED_ORIGINS = [os.getenv('FRONTEND_URL')]
+
 AUTH_USER_MODEL = 'user_auth.User'
+
+WSGI_APPLICATION = 'videoflix.wsgi.application'
+
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+CACHE_TTL = 60 * 15
