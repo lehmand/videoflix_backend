@@ -12,10 +12,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +30,7 @@ SECRET_KEY = 'django-insecure-l6m8-z#sn3f^^8#o$@jme34vz1fw+axsczyv=$shev49gufg=q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -63,14 +67,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 RQ_QUEUES = {
     'default': {
-        'HOST': '192.168.178.65',
-        'PORT': 6379,
-        'DB': 0,
-        # 'PASSWORD': 'foobared',
-        'DEFAULT_TIMEOUT': 360,
-        'DEFAULT_RESULT_TTL': 800,
+        'HOST':     os.getenv('REDIS_HOST', 'localhost'),
+        'PORT':     int(os.getenv('REDIS_PORT', 6379)),
+        'DB':       int(os.getenv('REDIS_DB', 0)),
+        'PASSWORD': os.getenv('REDIS_PASSWORD', None),
+        'DEFAULT_TIMEOUT':   int(os.getenv('RQ_DEFAULT_TIMEOUT', 360)),
+        'DEFAULT_RESULT_TTL':int(os.getenv('RQ_DEFAULT_RESULT_TTL', 800)),
     }
 }
 
@@ -84,13 +89,15 @@ ROOT_URLCONF = 'videoflix.urls'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.178.65:6379/1",
-        # "PASSWORD": "foobared",
+        "LOCATION": os.getenv("REDIS_CACHE_URL", "redis://localhost:6379/1"),
         "OPTIONS": {
-        "CLIENT_CLASS": "django_redis.client.DefaultClient"
-    },
-    "KEY_PREFIX": "videoflix"
-}
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            **({"PASSWORD": os.getenv("REDIS_PASSWORD")} 
+                if os.getenv("REDIS_PASSWORD") 
+                else {}),
+        },
+        "KEY_PREFIX": os.getenv("CACHE_KEY_PREFIX", "videoflix"),
+    }
 }
 
 INTERNAL_IPS = [
@@ -122,17 +129,24 @@ WSGI_APPLICATION = 'videoflix.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'videoflix',
-        'USER': 'daniel',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE":   "django.db.backends.postgresql",
+        "NAME":     os.getenv("POSTGRES_NAME"),
+        "USER":     os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST":     os.getenv("POSTGRES_HOST"),
+        "PORT":     os.getenv("POSTGRES_PORT"),
     }
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND       = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST          = os.getenv('EMAIL_HOST')
+EMAIL_PORT          = int(os.getenv('EMAIL_PORT', 25))
+EMAIL_USE_TLS       = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_USE_SSL       = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+EMAIL_HOST_USER     = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL  = os.getenv('DEFAULT_FROM_EMAIL')
 
 
 # Password validation
