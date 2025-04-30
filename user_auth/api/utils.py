@@ -20,7 +20,7 @@ def send_confirm_mail(email, username, activation_link):
       'activation_link': activation_link,
     })
   
-  text_content = f"Hallo {username.split('@')[0]}, bitte bestätige deine E-Mail über diesen Link: {activation_link}"
+  text_content = f"Hello {username.split('@')[0]}, please confirm your email with this link: {activation_link}"
   
   email_msg = EmailMultiAlternatives(subject, text_content, from_email, [email])
   email_msg.attach_alternative(html_content, "text/html")
@@ -34,7 +34,7 @@ def send_reset_mail(email, username, reset_link):
         'username': username.split('@')[0],
         'reset_link': reset_link,
     })
-    text_content = f"Hallo {username.split('@')[0]}, bitte führe ein Password reset durch: {reset_link}"
+    text_content = f"Hello {username.split('@')[0]}, please reset your password by clicking this link: {reset_link}"
   
     email_msg = EmailMultiAlternatives(subject, text_content, from_email, [email])
     email_msg.attach_alternative(html_content, "text/html")
