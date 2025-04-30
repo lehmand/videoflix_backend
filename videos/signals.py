@@ -13,8 +13,6 @@ def video_post_save(instance, created, **kwargs):
         queue = django_rq.get_queue('default', autocommit=True)
         queue.enqueue(convert_video, instance.file.path, 'hd480', '480p')
         queue.enqueue(convert_video, instance.file.path, 'hd720', '720p')
-        queue.enqueue(convert_video_hls, instance.file.path, 'hd480', '480p')
-        queue.enqueue(convert_video_hls, instance.file.path, 'hd720', '720p')
 
         convert_video(instance.file.path, 'hd480', '480p')
         convert_video(instance.file.path, 'hd720', '720p')
