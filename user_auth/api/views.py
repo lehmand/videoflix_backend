@@ -12,6 +12,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render, redirect
 from django.views import View
+from django.conf import settings
 from .serializers import RegisterSerializer
 from .utils import generate_activation_link, send_confirm_mail, send_reset_mail
 
@@ -74,12 +75,15 @@ class ActivateAccountView(View):
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
             user = None
 
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:4200')
+        context = {'frontend_url': frontend_url}
+
         if user is not None and default_token_generator.check_token(user, token):
             user.is_activated = True
             user.save()
-            return redirect('activation_success')
+            return render(request, 'redirect_pages/activation_success.html', context)
         else:
-            return render(request, 'activation_invalid.html')
+            return render(request, 'redirect_pages/activation_invalid.html', context)
 
 
 class PasswordResetRequestView(APIView):

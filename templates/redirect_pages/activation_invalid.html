@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Account Activation Failed</title>
+    <meta http-equiv="refresh" content="5;url={{ frontend_url }}/login?activation_error=true" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #141414;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            color: #333;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #ff3333;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .countdown {
+            font-weight: bold;
+            color: #2E3EDF;
+        }
+        .logo {
+            margin-bottom: 20px;
+            max-width: 200px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2E3EDF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        let seconds = 5;
+        function countdown() {
+            document.getElementById('countdown').textContent = seconds;
+            if (seconds > 0) {
+                seconds--;
+                setTimeout(countdown, 1000);
+            }
+        }
+        window.onload = countdown;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <img src="{% static 'img/logo.svg' %}" alt="Videoflix Logo" class="logo">
+        <h1>Aktivierung fehlgeschlagen</h1>
+        <p>Der Aktivierungslink ist ungültig oder abgelaufen. Bitte registriere dich erneut oder kontaktiere den Support. Du wirst in <span id="countdown" class="countdown">5</span> Sekunden zur Login-Seite weitergeleitet.</p>
+        <a href="{{ frontend_url }}/login" class="button">Zur Login-Seite</a>
+    </div>
+</body>
+</html>
