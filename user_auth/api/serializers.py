@@ -14,9 +14,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
   def validate(self, data):
     if data['password'] != data['repeated_password']:
-      raise serializers.ValidationError({'password': ['Passwörter stimmen nicht überein.']})
+      raise serializers.ValidationError({'password': ['Passwords dont match.']})
     if User.objects.filter(email=data['email']).exists():
-      raise serializers.ValidationError({'email': ['Diese E-mail wird bereits verwendet.']})
+      raise serializers.ValidationError({'email': ['Email is already in use.']})
     return data
   
   def create(self, validated_data):
