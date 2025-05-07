@@ -193,5 +193,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user_auth.User'
 
-FRONTEND_URL = 'http://localhost:4200'
-#FRONTEND_URL = 'https://videoflix.daniel-lehmann.dev'
+#FRONTEND_URL = 'http://localhost:4200'
+FRONTEND_URL = 'https://videoflix.daniel-lehmann.dev'
