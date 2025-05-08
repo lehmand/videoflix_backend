@@ -45,14 +45,14 @@ The project is divided into two main components:
 
 1. Clone the repository:
    ```
-   git clone [repository-url]
-   cd videoflix
+   git clone https://github.com/lehmand/videoflix_backend.git
+   cd videoflix_backend
    ```
 
 2. Create and activate a virtual environment:
    ```
    python -m venv venv
-   venv\Scripts\activate  # On Windows
+   "venv/Scripts/activate"  # On Windows
    ```
 
 3. Install dependencies:
@@ -60,7 +60,7 @@ The project is divided into two main components:
    pip install -r requirements.txt
    ```
 
-4. Create a `.env` file in the root directory (see `.env_template` as a template)
+4. Create a `.env` file in the root directory (see `dotenv_template` as a template)
 
 5. Migrate the database:
    ```
@@ -78,6 +78,9 @@ The project is divided into two main components:
    ```
 
 ### Frontend Setup
+
+git clone https://github.com/lehmand/videoflix_frontend.git
+cd videoflix_frontend
 
 1. Navigate to the frontend directory:
    ```
@@ -123,10 +126,11 @@ The system uses Django RQ for video conversion. To start the workers:
 ```
 python manage.py rqworker default
 ```
+Probably only works under Linux
 
 ## Deployment
 
-The application is configured for deployment on a Linux server with Nginx/Apache. See deployment documentation for more details.
+The application is configured for deployment on a Linux server with Nginx. 
 
 ## Environment Variables
 
