@@ -130,7 +130,7 @@ The application is configured for deployment on a Linux server with Nginx/Apache
 
 ## Environment Variables
 
-A `.env` file is needed to define configuration variables. A template is available in `.env_template`.
+A `.env` file is needed to define configuration variables. A template is available in `dotenv_template`.
 
 ## Authors
 
