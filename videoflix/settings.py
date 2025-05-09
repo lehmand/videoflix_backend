@@ -15,7 +15,6 @@ import os
 from dotenv import load_dotenv
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +24,15 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l6m8-z#sn3f^^8#o$@jme34vz1fw+axsczyv=$shev49gufg=q'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -78,11 +80,6 @@ RQ_QUEUES = {
         'DEFAULT_RESULT_TTL':int(os.getenv('RQ_DEFAULT_RESULT_TTL', 800)),
     }
 }
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
-]
 
 ROOT_URLCONF = 'videoflix.urls'
 
@@ -193,5 +190,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user_auth.User'
 
-#FRONTEND_URL = 'http://localhost:4200'
-FRONTEND_URL = 'https://videoflix.daniel-lehmann.dev'
+FRONTEND_URL = os.getenv('FRONTEND_URL')
