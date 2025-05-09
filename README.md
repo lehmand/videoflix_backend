@@ -79,8 +79,10 @@ The project is divided into two main components:
 
 ### Frontend Setup
 
-git clone https://github.com/lehmand/videoflix_frontend.git
-cd videoflix_frontend
+   ```
+   git clone https://github.com/lehmand/videoflix_frontend.git
+   cd videoflix_frontend
+   ```
 
 1. Navigate to the frontend directory:
    ```
