@@ -13,6 +13,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
   def validate(self, data):
+
+    required_fields = ['email', 'password', 'repeated_password']
+    for field in required_fields:
+        if field not in data:
+            raise serializers.ValidationError({field: [f'{field} is required.']})
+
+    if len(data['password']) < 6:
+      raise serializers.ValidationError({'password': ['Password must be at least 6 characters long.']})
     if data['password'] != data['repeated_password']:
       raise serializers.ValidationError({'password': ['Passwords dont match.']})
     if User.objects.filter(email=data['email']).exists():

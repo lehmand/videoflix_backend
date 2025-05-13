@@ -64,7 +64,7 @@ class CheckUserView(APIView):
 
     def post(self, request):
         email = request.data.get('email', '')
-        exists = User.objects.filter(email=email).exists()
+        exists = User.objects.filter(email__iexact=email).exists()
         return Response({'ok': exists}, status=HTTP_200_OK)
     
 class ActivateAccountView(View):
@@ -92,7 +92,7 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         email = request.data.get('email')
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
             return Response({
                 'message': 'If an account exists for the specified email, you will receive an email with password reset instructions.'
@@ -117,9 +117,21 @@ class PasswordResetConfirmView(APIView):
         new_password = request.data.get('new_password')
         new_password2 = request.data.get('new_password2')
         
+        if not new_password or not new_password2:
+            return Response(
+                {'message': 'Both password fields are required.'},
+                status=HTTP_400_BAD_REQUEST
+            )
+        
         if new_password != new_password2:
             return Response(
                 {'message': 'Passwords do not match.'},
+                status=HTTP_400_BAD_REQUEST
+            )
+            
+        if len(new_password) < 6:
+            return Response(
+                {'message': 'Password must be at least 6 characters long.'},
                 status=HTTP_400_BAD_REQUEST
             )
         try:
