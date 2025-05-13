@@ -9,6 +9,10 @@ import django_rq
 
 @receiver(post_save, sender=Video)
 def video_post_save(instance, created, **kwargs):
+    """
+    Signal handler that triggers video conversion when a new Video instance is created.
+    Adds conversion tasks to the Redis Queue to process asynchronously.
+    """
     if created:
         queue = django_rq.get_queue('default', autocommit=True)
         queue.enqueue(convert_video, instance.file.path, 'hd480', '480p')
